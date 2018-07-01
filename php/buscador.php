@@ -1,6 +1,6 @@
 <?php
 /**
- *  Funciones principales para el envio de datos del archivo JSON --->
+ *  Funciones principales para la ejecucion de busqueda personalizada --->
  */
 
 

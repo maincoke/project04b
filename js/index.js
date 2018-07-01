@@ -64,8 +64,6 @@ function setOptionsSelect(select) {
         success: (data) => {
             if (data) {
                 renderOptionsSelect(select, data);
-                //refreshView(data);
-                console.log(data);
             } else {
                 alert('No existen opciones para el selector :' + select);
             }

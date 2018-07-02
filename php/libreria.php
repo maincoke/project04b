@@ -1,5 +1,7 @@
 <?php
-  # ---> Libreria de funciones generales y especificas del buscador <---
+    # ---> Libreria de funciones generales y especificas del buscador <---
+    # <------------------------------------------------------------------>
+# --> Funcion que realiza la lectura de los datos y los transforma y transfiere al cliente <--
 function openDataFile($opentype) {
     $file_data = fopen('../data/data-1.json',$opentype);
     $readed_data = fread($file_data, filesize('../data/data-1.json'));
@@ -7,7 +9,7 @@ function openDataFile($opentype) {
     fclose($file_data);
     return $data;
 }
-
+# --> Funcion que filtra y ordena los criterios de seleccion para los elementos selects de la busqueda personalizada <--
 function sendItems($select, $alldata) {
     $allitems = [];
     //$item = [];
@@ -22,4 +24,5 @@ function sendItems($select, $alldata) {
     sort($filteredItems);
     return $filteredItems;
 }
+# --> 
 ?>

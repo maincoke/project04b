@@ -73,7 +73,6 @@ video#vidFondo {
 .filtroTipo .select-wrapper {
     margin: 15px auto;
     width: 90%;
-    display: inline-block;
 }
 
 .filtroPrecio {

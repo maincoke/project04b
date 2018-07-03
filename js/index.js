@@ -1,6 +1,4 @@
-/*
-  Creación de una función personalizada para jQuery que detecta cuando se detiene el scroll en la página //
-*/
+//  Creación de una función personalizada para jQuery que detecta cuando se detiene el scroll en la página //
 $.fn.scrollEnd = function(callback, timeout) {
     $(this).scroll(function() {
         var $this = $(this);
@@ -10,9 +8,7 @@ $.fn.scrollEnd = function(callback, timeout) {
         $this.data('scrollTimeout', setTimeout(callback, timeout));
     });
 };
-/*
-  Función que inicializa el elemento Slider //
-*/
+//  Función que inicializa el elemento Slider //
 function initSlider() {
     $("#rangoPrecio").ionRangeSlider({
         type: "double",
@@ -25,9 +21,7 @@ function initSlider() {
         prefix: "$"
     });
 }
-/*
-  Función que reproduce el video de fondo al hacer scroll, y deteiene la reproducción al detener el scroll //
-*/
+//  Función que reproduce el video de fondo al hacer scroll, y deteiene la reproducción al detener el scroll //
 function playVideoOnScroll() {
     var ultimoScroll = 0,
         intervalRewind;
@@ -47,9 +41,7 @@ function playVideoOnScroll() {
             video.pause();
         }, 10)
 }
-/*
-| Funcion que obtiene las opciones de los Selects de la busqueda personalizada //
-*/
+//  Funcion que obtiene las opciones de los Selects de la busqueda personalizada //
 function setOptionsSelect(select) {
     let selector = new FormData();
     selector.append('selector', select);
@@ -71,9 +63,7 @@ function setOptionsSelect(select) {
         error: (err) => console.log(err)
     });
 }
-/*
-  Funcion que renderiza y agrega las opciones de los Selects de la busqueda personalizada //
-*/
+//  Funcion que renderiza y agrega las opciones de los Selects de la busqueda personalizada //
 function renderOptionsSelect(selector, items) {
     let getsel = $('#select' + selector);
     getsel.material_select();
@@ -81,41 +71,77 @@ function renderOptionsSelect(selector, items) {
     items.forEach(item => getsel.append(`<option value="${item}">${item}</option>`));
     getsel.trigger('contentChanged');
 }
-/*
-  Funcion que renderiza y agrega los items de vivienda-propiedad como resultado de las busquedas //
-*/
-function renderItems(items) {
-
+//  Funcion que realiza las peticiones de datos POST AJAX hacia el servidor con codigo PHP //
+function ajaxRequestData(searchOption) {
+    return $.ajax({
+        url: './php/buscador.php',
+        dataType: 'json',
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        data: searchOption
+    });
 }
-/*
-  Funcion que inicializa los Selects de la busqueda personalizada segun los items del Archivo JSON //
-*/
-function initSelects() {
+//  Funcion que renderiza y agrega los items de vivienda-propiedad como resultado de las busquedas //
+function renderItems(item) {
+    let itemsList = $('.colContenido');
+    itemsList.append(
+        `<div class="card itemMostrado"><img src="./img/home.jpg">
+            <div class="card-stacked"><p>
+                <b>Direccion: </b>${item.Direccion}</br>
+                <b>Ciudad: </b>${item.Ciudad}</br>
+                <b>Teléfono: </b>${item.Telefono}</br>
+                <b>Código Postal: </b>${item.Codigo_Postal}</br>
+                <b>Tipo: </b>${item.Tipo}</br>
+                <b>Precio: </b><span class="precioTexto">${item.Precio}</span></p>
+            </div>
+        </div>`);
+}
+// Funcion que realiza el barrido de items de vivienda en cada una de las busquedas realizadas //
+function sweepItems() {
+    let itemsList = $('.colContenido');
+    if (itemsList.children().length > 1) {
+        itemsList.children('.itemMostrado').remove();
+    }
+}
+//  Inicializador de los Selects y Slider de la busqueda personalizada segun los items del Archivo JSON //
+function initInputSearch() {
     setOptionsSelect('Ciudad');
     setOptionsSelect('Tipo');
+    initSlider();
 }
-/*
-  Inicializacion de los Elementos de la busqueda personalizada //
-*/
-initSlider();
-initSelects();
-//playVideoOnScroll(); // Funcion en desuso por no obtener el video del projecto en la carpeta img //
-
-/**
- *  Funciones de ejecucion para los eventos de acciones de los botones de busqueda [Mostrar Todos] y [Buscar] //
- */
+//  Inicializacion de los Elementos de la busqueda personalizada //
+initInputSearch()
+playVideoOnScroll();
+// ---------------------------------------------------------------------------------------------------------- //
+//  Funciones de ejecucion para los eventos de acciones de los botones de busqueda [Mostrar Todos] y [Buscar] //
 $(function() {
-    $('mostrarTodos').on('click', function() {
-        $.ajax({
-            url: './php/buscador.php',
-            dataType: 'json',
-            cache: false,
-            contentType: false,
-            processData: false,
-            type: 'POST',
-            data: { custom: false }
-        }).done(data => {
-
-        }).fail(error => console.log(error));
+    $('#mostrarTodos').on('click', function(evt) {
+        evt.preventDefault();
+        let searchType = new FormData();
+        searchType.append('custom', false);
+        ajaxRequestData(searchType)
+            .done(data => {
+                sweepItems();
+                data.forEach(item => renderItems(item));
+            }).fail(error => console.log(error));
+    });
+    $('#formulario').submit(function(evt) {
+        evt.preventDefault();
+        let cdad_opc = $('#selectCiudad').val();
+        let tipo_opc = $('#selectTipo').val();
+        let rango = $('#rangoPrecio').prop("value").split(";");
+        let searchType = new FormData();
+        searchType.append('custom', true);
+        searchType.append('cdad', cdad_opc);
+        searchType.append('tipo', tipo_opc);
+        searchType.append('preciobj', rango[0]);
+        searchType.append('precioat', rango[1]);
+        ajaxRequestData(searchType)
+            .done(data => {
+                sweepItems();
+                data.forEach(item => renderItems(item));
+            }).fail(error => console.log(error));
     });
 });

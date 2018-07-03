@@ -14,14 +14,14 @@
 </head>
 
 <body>
-    <!-- <video src="img/video.mp4" id="vidFondo"></video> -->
-
+    <video src="img/cityvideo.mp4" id="vidFondo"></video>
+    <!--  action="buscador.php" method="post" -->
     <div class="contenedor">
         <div class="card rowTitulo">
             <h1>Buscador</h1>
         </div>
         <div class="colFiltros">
-            <form action="buscador.php" method="post" id="formulario">
+            <form id="formulario">
                 <div class="filtrosContenido">
                     <div class="tituloFiltros">
                         <h5>Realiza una búsqueda personalizada</h5>
@@ -34,7 +34,7 @@
                     </div>
                     <div class="input-field filtroTipo">
                         <label for="selecTipo">Tipo:</label><br>
-                        <select name="tipo" id="selectTipo">
+                        <select name="tipo" id="selectTipo" class="select-wrapper">
                           <option value="" selected>Elige un tipo</option>
                         </select>
                     </div>
@@ -43,7 +43,7 @@
                         <input type="text" id="rangoPrecio" name="precio" value="" />
                     </div>
                     <div class="botonField">
-                        <input type="submit" class="btn white" value="Buscar" id="submitButton">
+                        <button type="submit" class="btn white" value="Buscar" id="submitButton">Buscar</button>
                     </div>
                 </div>
             </form>

@@ -91,7 +91,7 @@ video#vidFondo {
     text-align: center;
 }
 
-.botonField input {
+.botonField button {
     color: #648C7D;
 }
 
@@ -135,23 +135,28 @@ video#vidFondo {
 .itemMostrado {
     width: 100%;
     margin-top: 0.4rem;
+    display: -webkit-flex;
     display: flex;
     flex-flow: row wrap;
 }
 
 .itemMostrado img {
     width: 35% !important;
-}
-
-.precioTexto {
-    font-size: 1.3rem;
-    color: #ffab40;
+    height: 100% !important;
+    padding: 2% !important;
 }
 
 .card-stacked {
-    width: 65%;
+    width: 65% !important;
+    padding: 10px 20px !important;
+}
+
+.precioTexto {
+    font-size: 1.2rem;
+    color: #ffab40;
 }
 
 .card-action {
     text-align: right;
+    padding: 10px 10px 0 10px !important;
 }

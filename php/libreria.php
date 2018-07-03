@@ -24,5 +24,8 @@ function sendItems($select, $alldata) {
     sort($filteredItems);
     return $filteredItems;
 }
-# --> 
+# --> Funcion que filtra los items de vivienda segun los criterios de la busqueda personalizada <--
+function getItemsFiltered($alldata, $cdad, $tipo, $preciobj, $precioat) {
+    
+}
 ?>

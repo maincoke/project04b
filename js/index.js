@@ -8,6 +8,19 @@ $.fn.scrollEnd = function(callback, timeout) {
         $this.data('scrollTimeout', setTimeout(callback, timeout));
     });
 };
+//  Función que reproduce el video de fondo al hacer scroll, y deteiene la reproducción al detener el scroll //
+function playVideoOnScroll() {
+    var ultimoScroll = 0,
+        intervalRewind;
+    var video = document.getElementById('vidFondo');
+    $(window)
+        .scroll((event) => {
+            var scrollActual = $(window).scrollTop();
+            if (scrollActual > ultimoScroll) { video.play() } else { video.play() }
+            ultimoScroll = scrollActual;
+        })
+        .scrollEnd(() => video.pause(), 10)
+}
 //  Función que inicializa el elemento Slider //
 function initSlider() {
     $("#rangoPrecio").ionRangeSlider({
@@ -20,23 +33,6 @@ function initSlider() {
         step: 100,
         prefix: "$"
     });
-}
-//  Función que reproduce el video de fondo al hacer scroll, y deteiene la reproducción al detener el scroll //
-function playVideoOnScroll() {
-    var ultimoScroll = 0,
-        intervalRewind;
-    var video = document.getElementById('vidFondo');
-    $(window)
-        .scroll((event) => {
-            var scrollActual = $(window).scrollTop();
-            if (scrollActual > ultimoScroll) {
-                video.play();
-            } else {
-                video.play();
-            }
-            ultimoScroll = scrollActual;
-        })
-        .scrollEnd(() => video.pause(), 10)
 }
 //  Funcion que obtiene las opciones de los Selects de la busqueda personalizada //
 function setOptionsSelect(select) {
@@ -51,11 +47,7 @@ function setOptionsSelect(select) {
         type: 'POST',
         data: selector,
         success: (data) => {
-            if (data) {
-                renderOptionsSelect(select, data);
-            } else {
-                alert('No existen opciones para el selector :' + select);
-            }
+            if (data) { renderOptionsSelect(select, data) } else { alert('No existen opciones para el selector :' + select) }
         },
         error: (err) => console.log(err)
     });
@@ -67,6 +59,20 @@ function renderOptionsSelect(selector, items) {
     getsel.on('contentChanged', function() { $(this).material_select() });
     items.forEach(item => getsel.append(`<option value="${item}">${item}</option>`));
     getsel.trigger('contentChanged');
+}
+//  Funcion que reincia los selectores de la busqueda personalizada al ejecutar una busqueda general //
+function resetCustomSearch(i, selector) {
+    let rangeBar = $('#rangoPrecio').data('ionRangeSlider');
+    rangeBar.reset();
+    do {
+        $('#select' + selector + ' option[selected]').removeAttr("selected");
+        $('#select' + selector + ' option[value=""]').attr("selected", "selected");
+        let optionSel = selector == 'Ciudad' ? 'a ' + selector.toLowerCase() : ' ' + selector.toLowerCase();
+        $('.select #select' + selector + ' li:contains("Elige un' + optionSel + '")').trigger('click');
+        $('#select' + selector).trigger('contentChanged');
+        selector = selector == 'Ciudad' ? 'Tipo' : selector;
+        i += 1;
+    } while (i < 2);
 }
 //  Funcion que realiza las peticiones de datos POST AJAX hacia el servidor con codigo PHP //
 function ajaxRequestData(searchOption) {
@@ -107,7 +113,6 @@ function sweepItems(mode) {
         Esta búsqueda no encontró información de viviendas con los criterios seleccionados!</b></p></div></div>`);
     }
 }
-// Funcion que reincia los selectores de la busqueda personalizada al ejecutar una busqueda general //
 //  Inicializador de los Selects, Slider de la busqueda personalizada y reproduccion de Video de Fondo //
 function initSearcher() {
     setOptionsSelect('Ciudad');
@@ -116,8 +121,8 @@ function initSearcher() {
     playVideoOnScroll();
 }
 //  Inicializacion del Buscador y de los Elementos de la busqueda personalizada //
-initSearcher()
-    //  Funciones de ejecucion para los eventos de acciones de los botones de busqueda [Mostrar Todos] y [Buscar] //
+initSearcher();
+//  Funciones de ejecucion para los eventos de acciones de los botones de busqueda [Mostrar Todos] y [Buscar] //
 $(function() {
     // Boton [Mostrar Todos] //
     $('#mostrarTodos').on('click', function(evt) {
@@ -128,6 +133,7 @@ $(function() {
             .done(data => {
                 sweepItems(false);
                 data.forEach(item => renderItems(item));
+                resetCustomSearch(0, 'Ciudad');
             }).fail(error => console.log(error));
     });
     // Boton [Buscar] de Busqueda Personalizada //

@@ -14,30 +14,34 @@
 </head>
 
 <body>
+    <!-- Video de Fondo que se reproduce al momento de realizar Scroll en en Buscador -->
     <video src="img/cityvideo.mp4" id="vidFondo"></video>
-    <!--  action="buscador.php" method="post" -->
     <div class="contenedor">
         <div class="card rowTitulo">
             <h1>Buscador</h1>
         </div>
+        <!-- Contenedor de la seccion de busqueda personalizada -->
         <div class="colFiltros">
             <form id="formulario">
                 <div class="filtrosContenido">
                     <div class="tituloFiltros">
                         <h5>Realiza una búsqueda personalizada</h5>
                     </div>
+                    <!-- Elemento de Seleccion de la Ciudad en Busqueda Personalizada -->
                     <div class="input-field filtroCiudad">
                         <label for="selectCiudad">Ciudad:</label><br>
                         <select name="ciudad" id="selectCiudad" class="select-wrapper">
                           <option value="" selected>Elige una ciudad</option>
                         </select>
                     </div>
+                    <!-- Elemento de Seleccion del Tipo de vivienda en Busqueda Personalizada -->
                     <div class="input-field filtroTipo">
                         <label for="selecTipo">Tipo:</label><br>
                         <select name="tipo" id="selectTipo" class="select-wrapper">
                           <option value="" selected>Elige un tipo</option>
                         </select>
                     </div>
+                    <!-- Elemento de Seleccion del Rango de precio en Busqueda Personalizada -->
                     <div class="filtroPrecio">
                         <label for="rangoPrecio">Precio:</label>
                         <input type="text" id="rangoPrecio" name="precio" value="" />
@@ -48,11 +52,12 @@
                 </div>
             </form>
         </div>
-
+        <!-- Contenedor de la seccion donde se muestran los Items de Vivienda segun la busqueda ejecutada -->
         <div class="colContenido">
             <div class="tituloContenido card">
                 <h5>Resultados de la búsqueda:</h5>
                 <div class="divider"></div>
+                <!-- Boton de seleccion de la busqueda general de todos los Items de Vivienda -->
                 <button type="button" name="todos" class="btn-flat waves-effect" id="mostrarTodos">Mostrar Todos</button>
             </div>
         </div>

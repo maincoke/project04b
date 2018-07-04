@@ -12,7 +12,6 @@ function openDataFile($opentype) {
 # --> Funcion que filtra y ordena los criterios de seleccion para los elementos selects de la busqueda personalizada <--
 function sendItems($select, $alldata) {
     $allitems = [];
-    //$item = [];
     foreach ($alldata as $key => $value) {
         if($select == 'Ciudad') {
             array_push($allitems,$alldata[$key]['Ciudad']);
@@ -26,6 +25,18 @@ function sendItems($select, $alldata) {
 }
 # --> Funcion que filtra los items de vivienda segun los criterios de la busqueda personalizada <--
 function getItemsFiltered($alldata, $cdad, $tipo, $preciobj, $precioat) {
-    
+    $priceFilter = array_filter($alldata, function($val, $key) use ($preciobj, $precioat) {
+        $priceNum = intval(str_replace(',','',substr($val['Precio'],1)));
+        if($priceNum >= $preciobj and $priceNum <= $precioat) {
+            return $priceNum;
+        }
+    }, ARRAY_FILTER_USE_BOTH);
+    $cityFilter = $cdad != '' ? array_filter($priceFilter, function($val, $key) use ($cdad) {
+        return $val['Ciudad'] == $cdad;
+    }, ARRAY_FILTER_USE_BOTH) : $priceFilter;
+    $typeFilter = $tipo != '' ? array_filter($cityFilter, function($val, $key) use ($tipo) {
+        return $val['Tipo'] == $tipo;
+    }, ARRAY_FILTER_USE_BOTH) : $cityFilter;
+    return $typeFilter;
 }
 ?>

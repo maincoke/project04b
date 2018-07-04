@@ -6,12 +6,15 @@ require 'libreria.php';
 $searchType = $_POST['custom'];
 $datafile = openDataFile('r');
 $send_items = array();
-if ($searchType === true) {
+if (boolval($searchType)) {
     $opcCiudad = $_POST['cdad'];
     $opcTipo = $_POST['tipo'];
     $precioBj = $_POST['preciobj'];
     $precioAt = $_POST['precioat'];
-    $send_items = getItemsFiltered($datafile, $opcCiudad, $opcTipo, $precioBj, $precioAt);
+    $customsearch = getItemsFiltered($datafile, $opcCiudad, $opcTipo, $precioBj, $precioAt);
+    foreach ($customsearch as $key => $value) {
+        array_push($send_items, $customsearch[$key]);
+    }
 } else {
     $send_items = $datafile;
 }

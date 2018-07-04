@@ -32,14 +32,11 @@ function playVideoOnScroll() {
             if (scrollActual > ultimoScroll) {
                 video.play();
             } else {
-                //this.rewind(1.0, video, intervalRewind);
                 video.play();
             }
             ultimoScroll = scrollActual;
         })
-        .scrollEnd(() => {
-            video.pause();
-        }, 10)
+        .scrollEnd(() => video.pause(), 10)
 }
 //  Funcion que obtiene las opciones de los Selects de la busqueda personalizada //
 function setOptionsSelect(select) {
@@ -98,49 +95,57 @@ function renderItems(item) {
             </div>
         </div>`);
 }
-// Funcion que realiza el barrido de items de vivienda en cada una de las busquedas realizadas //
-function sweepItems() {
+/*  Funcion que realiza el barrido de items de vivienda en cada una de las busquedas realizadas y
+    envia un mensaje de aviso en caso que la busqueda personalizada no obtenga items para mostrar */
+function sweepItems(mode) {
     let itemsList = $('.colContenido');
     if (itemsList.children().length > 1) {
         itemsList.children('.itemMostrado').remove();
     }
+    if (mode) {
+        itemsList.append(`<div class="card itemMostrado"><div class="card-stacked"><p><b>
+        Esta búsqueda no encontró información de viviendas con los criterios seleccionados!</b></p></div></div>`);
+    }
 }
-//  Inicializador de los Selects y Slider de la busqueda personalizada segun los items del Archivo JSON //
-function initInputSearch() {
+// Funcion que reincia los selectores de la busqueda personalizada al ejecutar una busqueda general //
+//  Inicializador de los Selects, Slider de la busqueda personalizada y reproduccion de Video de Fondo //
+function initSearcher() {
     setOptionsSelect('Ciudad');
     setOptionsSelect('Tipo');
     initSlider();
+    playVideoOnScroll();
 }
-//  Inicializacion de los Elementos de la busqueda personalizada //
-initInputSearch()
-playVideoOnScroll();
-// ---------------------------------------------------------------------------------------------------------- //
-//  Funciones de ejecucion para los eventos de acciones de los botones de busqueda [Mostrar Todos] y [Buscar] //
+//  Inicializacion del Buscador y de los Elementos de la busqueda personalizada //
+initSearcher()
+    //  Funciones de ejecucion para los eventos de acciones de los botones de busqueda [Mostrar Todos] y [Buscar] //
 $(function() {
+    // Boton [Mostrar Todos] //
     $('#mostrarTodos').on('click', function(evt) {
         evt.preventDefault();
         let searchType = new FormData();
-        searchType.append('custom', false);
+        searchType.append('custom', 0);
         ajaxRequestData(searchType)
             .done(data => {
-                sweepItems();
+                sweepItems(false);
                 data.forEach(item => renderItems(item));
             }).fail(error => console.log(error));
     });
+    // Boton [Buscar] de Busqueda Personalizada //
     $('#formulario').submit(function(evt) {
         evt.preventDefault();
         let cdad_opc = $('#selectCiudad').val();
         let tipo_opc = $('#selectTipo').val();
         let rango = $('#rangoPrecio').prop("value").split(";");
         let searchType = new FormData();
-        searchType.append('custom', true);
+        searchType.append('custom', 1);
         searchType.append('cdad', cdad_opc);
         searchType.append('tipo', tipo_opc);
-        searchType.append('preciobj', rango[0]);
-        searchType.append('precioat', rango[1]);
+        searchType.append('preciobj', parseInt(rango[0]));
+        searchType.append('precioat', parseInt(rango[1]));
         ajaxRequestData(searchType)
             .done(data => {
-                sweepItems();
+                let emptyData = data.length != 0 ? false : true;
+                sweepItems(emptyData);
                 data.forEach(item => renderItems(item));
             }).fail(error => console.log(error));
     });
